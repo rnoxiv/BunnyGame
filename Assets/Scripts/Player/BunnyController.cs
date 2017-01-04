@@ -5,12 +5,15 @@ using UnityEngine;
 public class BunnyController : MonoBehaviour {
 
     private Rigidbody2D rbody;
+    private Animator anim;
+
     public float JumpForce = 300f;
     public float Speed = 20f;
     private int numJumped = 0;
 	// Use this for initialization
 	void Start () {
         rbody = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -23,5 +26,6 @@ public class BunnyController : MonoBehaviour {
         {
             numJumped = 0;
         }
+        anim.SetFloat("JVelocity", rbody.velocity.y);
 	}
 }
