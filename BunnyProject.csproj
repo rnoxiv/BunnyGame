@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\Environnement\Destroyer.cs" />
     <Compile Include="Assets\Scripts\Environnement\ElementSpawner.cs" />
     <Compile Include="Assets\Scripts\Environnement\MoveLeft.cs" />
+    <Compile Include="Assets\Scripts\Environnement\Recycler.cs" />
     <Compile Include="Assets\Scripts\Player\BunnyController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

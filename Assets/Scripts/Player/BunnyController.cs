@@ -10,9 +10,9 @@ public class BunnyController : MonoBehaviour {
     private Collider2D collid;
     private float startTime;
     private float deathTime = -1;
+    private int numJumped = 0;
 
     public Text scoreText;
-    public float Score = 0;
     public float JumpForce = 750f;
 
 	// Use this for initialization
@@ -28,8 +28,14 @@ public class BunnyController : MonoBehaviour {
 	void Update () {
         if(deathTime == -1)
         {
-            if (Input.GetButtonUp("Jump")){
-                rbody.AddForce(transform.up * JumpForce);
+            if (Input.GetButtonUp("Jump") && numJumped < 2){
+                if (rbody.velocity.y < 0)
+                    rbody.velocity = Vector2.zero;
+                float valJump = JumpForce;
+                if (numJumped == 1)
+                    valJump = JumpForce * 0.75f;
+                rbody.AddForce(transform.up * valJump);
+                numJumped++;
             }
             anim.SetFloat("JVelocity", rbody.velocity.y);
             scoreText.text = (Time.time - startTime).ToString("0.0");
@@ -59,7 +65,9 @@ public class BunnyController : MonoBehaviour {
             rbody.velocity = Vector2.zero;
             collid.enabled = false;
             rbody.AddForce(transform.up * JumpForce);
-            Score = 0;
+        }else if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ground") && numJumped != 0)
+        {
+            numJumped = 0;
         }
             
     }
