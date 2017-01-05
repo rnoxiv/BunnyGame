@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BunnyController : MonoBehaviour {
@@ -14,6 +15,8 @@ public class BunnyController : MonoBehaviour {
 
     public Text scoreText;
     public float JumpForce = 750f;
+    public AudioSource deathSFX;
+    public AudioSource jumpSFX;
 
 	// Use this for initialization
 	void Start () {
@@ -26,9 +29,16 @@ public class BunnyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+
         if(deathTime == -1)
         {
-            if (Input.GetButtonUp("Jump") && numJumped < 2){
+            if ((Input.GetButtonUp("Jump") || Input.GetButtonUp("Fire1"))  && numJumped < 2){
+                jumpSFX.Play();
                 if (rbody.velocity.y < 0)
                     rbody.velocity = Vector2.zero;
                 float valJump = JumpForce;
@@ -43,7 +53,7 @@ public class BunnyController : MonoBehaviour {
         {
 
             if(Time.time > (deathTime + 2))
-                Application.LoadLevel(Application.loadedLevel);
+                SceneManager.LoadScene("GameScene");
         }
         
 	}
@@ -52,6 +62,8 @@ public class BunnyController : MonoBehaviour {
     {
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
+            GameObject.Find("BGSound").GetComponent<AudioSource>().Stop();
+            deathSFX.Play();
             foreach(MoveLeft movelefter in FindObjectsOfType<MoveLeft>())
             {
                 movelefter.enabled = false;
@@ -65,6 +77,11 @@ public class BunnyController : MonoBehaviour {
             rbody.velocity = Vector2.zero;
             collid.enabled = false;
             rbody.AddForce(transform.up * JumpForce);
+
+            float currentBestScore = PlayerPrefs.GetFloat("BestScore", 0);
+            float currentScore = Time.time - startTime;
+            if (currentBestScore < currentScore)
+                PlayerPrefs.SetFloat("BestScore", currentScore);
         }else if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ground") && numJumped != 0)
         {
             numJumped = 0;
